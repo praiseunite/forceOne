@@ -6,7 +6,55 @@ import turtle
 turtle.fd(0) #fd is short for forward for the window to open on mac 
 turtle.speed(0) #Sets the speed of the turtle module to 0 which is the speed of the animation.
 turtle.bgcolor("black") #Sets the background color to black 
+turtle.ht() #Hides the turtle
+turtle.setundobuffer(1) #Sets the undo buffer to 1
+turtle.tracer(1) #Traces the animation
 
+class Sprite(turtle.Turtle):
+    def __init__(self, sprite_shape, color, startx, starty):
+        turtle.Turtle.__init__(self, shape=sprite_shape)
+        self.speed(0)
+        self.color(color)
+        self.penup()
+        self.goto(startx, starty)
+        self.speed = 1
+        self.fd(0)
+        
+    def move(self):
+        self.fd(self.speed)
+
+class Player(Sprite):  #Inherits from Sprite class  #Player class is a subclass of the Sprite class
+     def __init__(self, sprite_shape, color, startx, starty): #Constructor  __init__ is a special method in Python classes, it is the constructor method for a class. It is called when an object of the class is created.
+        Sprite.__init__(self, sprite_shape, color, startx, starty)  #Calls the constructor of the Sprite class and passes the parameters to it.  #The super() function is used to give access to methods and properties of a parent or sibling class.
+        self.speed = 2
+        self.lives = 3
+        
+     def turn_left(self):  #Method to turn the player to the left and it needs to be connected to the arrow key on the keyboard.
+        self.lt(45)
+        
+     def turn_right(self):
+        self.rt(45)
+        
+     def accelerate(self):
+        self.speed += 1
+        
+     def decelerate(self):
+        self.speed -= 1
+
+#Create my Sprite 
+player = Player("triangle", "white", 0, 0)
+
+#Keyboard bindings  #These are the key bindings that are used to control the player.  #The onkey() method is used to bind a function to a key.  #The listen() method is used to listen for events.
+turtle.onkey(player.turn_left, "Left")    # this binds the arrow to the keyboard and also you need to tell it to listen.
+turtle.onkey(player.turn_right, "Right")
+turtle.onkey(player.accelerate, "Up")
+turtle.onkey(player.decelerate, "Down")
+turtle.listen()
+
+#MAin game loop
+while True:
+    player.move()
+    
 
 
 
