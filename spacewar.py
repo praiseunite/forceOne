@@ -22,6 +22,24 @@ class Sprite(turtle.Turtle):
         
     def move(self):
         self.fd(self.speed)
+        
+        #Detect boundaries
+        if self.xcor() > 290:  #If the x coordinate of the sprite is greater than 290
+            self.setx(290)  #Set the x coordinate of the sprite to 290
+            self.rt(60)  #Turn the sprite to the right by 60 degrees
+        
+        if self.xcor() < -290:  #If the x coordinate of the sprite is less than -290
+            self.setx(-290)  #Set the x coordinate of the sprite to -290
+            self.rt(60)   #Turn the sprite to the right by 60 degrees
+            
+        if self.ycor() > 290:  #If the y coordinate of the sprite is greater than 290
+            self.sety(290)
+            self.rt(60)
+            
+        if self.ycor() < -290:  #If the y coordinate of the sprite is less than -290
+            self.sety(-290)
+            self.rt(60)
+            
 
 class Player(Sprite):  #Inherits from Sprite class  #Player class is a subclass of the Sprite class
     def __init__(self, sprite_shape, color, startx, starty): #Constructor  __init__ is a special method in Python classes, it is the constructor method for a class. It is called when an object of the class is created.
