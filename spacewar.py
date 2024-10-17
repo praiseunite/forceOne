@@ -101,14 +101,14 @@ class Ally(Sprite):  #Inherits from Sprite class  #Enemy class is a subclass of 
             self.sety(-290)
             self.lt(60)
             
-    def is_collision(self, other):  #Method to check for collision between two sprites
-        if (self.xcor() >= (other.xcor() - 20)) and \
-            (self.xcor() <= (other.xcor() + 20)) and \
-            (self.ycor() >= (other.ycor() - 20)) and \
-            (self.ycor() <= (other.ycor() + 20)):
-                return True
-        else:
-            return False
+    # def is_collision(self, other):  #Method to check for collision between two sprites
+    #     if (self.xcor() >= (other.xcor() - 20)) and \
+    #         (self.xcor() <= (other.xcor() + 20)) and \
+    #         (self.ycor() >= (other.ycor() - 20)) and \
+    #         (self.ycor() <= (other.ycor() + 20)):
+    #             return True
+    #     else:
+    #         return False
         
 
 class Missile(Sprite):  #Inherits from Sprite class  #Missile class is a subclass of the Sprite class
@@ -121,6 +121,8 @@ class Missile(Sprite):  #Inherits from Sprite class  #Missile class is a subclas
         
     def fire(self):
         if self.status == "ready":
+            # play the sound 
+            os.system("afplay shooter.wav&")
             self.goto(player.xcor(), player.ycor())
             self.setheading(player.heading())
             self.status = "firing"
@@ -160,12 +162,24 @@ class Game():
             self.pen.rt(90)
         self.pen.penup()
         self.pen.ht()
+        self.pen.pendown()
+        
+    def show_status(self):
+        self.pen.undo()
+        msg = "Score: %s" %self.score
+        self.pen.goto(-300, 310)
+        self.pen.write(msg, font=("Arial", 16, "normal"))
+        self.pen.penup()
+        
 
 #Create game object
 game = Game()
 
 #Draw the game border
 game.draw_border()
+
+# Show the game status
+game.show_status()
 
 #Create my Sprite 
 player = Player("triangle", "white", 0, 0)
@@ -196,15 +210,10 @@ while True:
         enemy.goto(x, y)
         game.score -= 100
         game.lives -= 1
+        game.show_status()
         print("Score: {}".format(game.score))
         print("Lives: {}".format(game.lives))
         
-    if player.is_collision(ally):
-        x = random.randint(-250, 250)
-        y = random.randint(-250, 250)
-        ally.goto(x, y)
-        game.score -= 100
-        print("Score: {}".format(game.score))
         
     # Check for a collision between the missile and the enemy
     if missile.is_collision(enemy):
@@ -213,7 +222,17 @@ while True:
         enemy.goto(x, y)
         missile.status = "ready"
         game.score += 100
+        game.show_status()
         print("Score: {}".format(game.score))
+        
+    if missile.is_collision(ally):
+        x = random.randint(-250, 250)
+        y = random.randint(-250, 250)
+        ally.goto(x, y)
+        game.score -= 50
+        game.show_status()
+        print("Score: {}".format(game.score))
+        
 
 
 
