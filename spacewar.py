@@ -74,6 +74,42 @@ class Enemy(Sprite):  #Inherits from Sprite class  #Enemy class is a subclass of
         Sprite.__init__(self, sprite_shape, color, startx, starty)  #Calls the constructor of the Sprite class and passes the parameters to it.
         self.speed = 6
         self.setheading(random.randint(0,360))
+        
+class Ally(Sprite):  #Inherits from Sprite class  #Enemy class is a subclass of the Sprite class
+    def __init__(self, sprite_shape, color, startx, starty):  #Constructor
+        Sprite.__init__(self, sprite_shape, color, startx, starty)  #Calls the constructor of the Sprite class and passes the parameters to it.
+        self.speed = 8
+        self.setheading(random.randint(0,360))
+        
+    def move(self):
+        self.fd(self.speed)
+        
+        #Detect boundaries
+        if self.xcor() > 290:
+            self.setx(290)
+            self.lt(60)
+            
+        if self.xcor() < -290:
+            self.setx(-290)
+            self.lt(60)
+            
+        if self.ycor() > 290:
+            self.sety(290)
+            self.lt(60)
+            
+        if self.ycor() < -290:
+            self.sety(-290)
+            self.lt(60)
+            
+    def is_collision(self, other):  #Method to check for collision between two sprites
+        if (self.xcor() >= (other.xcor() - 20)) and \
+            (self.xcor() <= (other.xcor() + 20)) and \
+            (self.ycor() >= (other.ycor() - 20)) and \
+            (self.ycor() <= (other.ycor() + 20)):
+                return True
+        else:
+            return False
+        
 
 class Missile(Sprite):  #Inherits from Sprite class  #Missile class is a subclass of the Sprite class
     def __init__(self, sprite_shape, color, startx, starty):  #Constructor
@@ -135,6 +171,7 @@ game.draw_border()
 player = Player("triangle", "white", 0, 0)
 enemy = Enemy("circle", "red", -100, 0)
 missile = Missile("triangle", "yellow", 0, 0)
+ally = Ally("square", "blue", 100, 0)
 
 
 
@@ -151,6 +188,7 @@ while True:
     player.move()
     enemy.move()
     missile.move()
+    ally.move()
     
     if player.is_collision(enemy):
         x = random.randint(-250, 250)
@@ -160,6 +198,13 @@ while True:
         game.lives -= 1
         print("Score: {}".format(game.score))
         print("Lives: {}".format(game.lives))
+        
+    if player.is_collision(ally):
+        x = random.randint(-250, 250)
+        y = random.randint(-250, 250)
+        ally.goto(x, y)
+        game.score -= 100
+        print("Score: {}".format(game.score))
         
     # Check for a collision between the missile and the enemy
     if missile.is_collision(enemy):
