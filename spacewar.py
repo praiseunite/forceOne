@@ -40,6 +40,16 @@ class Sprite(turtle.Turtle):
             self.sety(-290)
             self.rt(60)
             
+    def is_collision(self, other):  #Method to check for collision between two sprites
+        if (self.xcor() >= (other.xcor() - 20)) and \
+            (self.xcor() <= (other.xcor() + 20)) and \
+            (self.ycor() >= (other.ycor() - 20)) and \
+            (self.ycor() <= (other.ycor() + 20)):
+                return True
+        else:
+            return False
+        
+            
 
 class Player(Sprite):  #Inherits from Sprite class  #Player class is a subclass of the Sprite class
     def __init__(self, sprite_shape, color, startx, starty): #Constructor  __init__ is a special method in Python classes, it is the constructor method for a class. It is called when an object of the class is created.
@@ -58,6 +68,12 @@ class Player(Sprite):  #Inherits from Sprite class  #Player class is a subclass 
         
     def decelerate(self):
         self.speed -= 1
+        
+class Enemy(Sprite):  #Inherits from Sprite class  #Enemy class is a subclass of the Sprite class
+    def __init__(self, sprite_shape, color, startx, starty):  #Constructor
+        Sprite.__init__(self, sprite_shape, color, startx, starty)  #Calls the constructor of the Sprite class and passes the parameters to it.
+        self.speed = 6
+        self.setheading(random.randint(0,360))
         
 class Game():
     def __init__(self):
@@ -89,6 +105,9 @@ game.draw_border()
 
 #Create my Sprite 
 player = Player("triangle", "white", 0, 0)
+enemy = Enemy("circle", "red", -100, 0)
+
+
 
 #Keyboard bindings  #These are the key bindings that are used to control the player.  #The onkey() method is used to bind a function to a key.  #The listen() method is used to listen for events.
 turtle.onkey(player.turn_left, "Left")    # this binds the arrow to the keyboard and also you need to tell it to listen.
@@ -100,6 +119,17 @@ turtle.listen()
 #Main game loop
 while True:
     player.move()
+    enemy.move()
+    
+    if player.is_collision(enemy):
+        x = random.randint(-250, 250)
+        y = random.randint(-250, 250)
+        enemy.goto(x, y)
+        game.score -= 100
+        game.lives -= 1
+        print("Score: {}".format(game.score))
+        print("Lives: {}".format(game.lives))
+        
     
 
 
