@@ -74,7 +74,35 @@ class Enemy(Sprite):  #Inherits from Sprite class  #Enemy class is a subclass of
         Sprite.__init__(self, sprite_shape, color, startx, starty)  #Calls the constructor of the Sprite class and passes the parameters to it.
         self.speed = 6
         self.setheading(random.randint(0,360))
+
+class Missile(Sprite):  #Inherits from Sprite class  #Missile class is a subclass of the Sprite class
+    def __init__(self, sprite_shape, color, startx, starty):  #Constructor
+        Sprite.__init__(self, sprite_shape, color, startx, starty)  #Calls the constructor of the Sprite class and passes the parameters to it.
+        self.shapesize(stretch_wid=0.3, stretch_len=0.4, outline=None)
+        self.speed = 20
+        self.status = "ready"
+        # self.goto(-1000, 1000) 
         
+    def fire(self):
+        if self.status == "ready":
+            self.goto(player.xcor(), player.ycor())
+            self.setheading(player.heading())
+            self.status = "firing"
+            
+    def move(self):
+        if self.status == "ready":
+            self.goto(-1000, 1000)
+            
+        if self.status == "firing":
+            self.fd(self.speed)
+            
+        # Border check
+        if self.xcor() < -290 or self.xcor() > 290 or \
+            self.ycor() < -290 or self.ycor() > 290:
+            self.goto(-1000, 1000)
+            self.status = "ready"
+            
+#Create game class
 class Game():
     def __init__(self):
         self.level = 1
@@ -106,6 +134,7 @@ game.draw_border()
 #Create my Sprite 
 player = Player("triangle", "white", 0, 0)
 enemy = Enemy("circle", "red", -100, 0)
+missile = Missile("triangle", "yellow", 0, 0)
 
 
 
@@ -114,12 +143,14 @@ turtle.onkey(player.turn_left, "Left")    # this binds the arrow to the keyboard
 turtle.onkey(player.turn_right, "Right")
 turtle.onkey(player.accelerate, "Up")
 turtle.onkey(player.decelerate, "Down")
+turtle.onkey(missile.fire, "space")
 turtle.listen()
 
 #Main game loop
 while True:
     player.move()
     enemy.move()
+    missile.move()
     
     if player.is_collision(enemy):
         x = random.randint(-250, 250)
@@ -130,7 +161,14 @@ while True:
         print("Score: {}".format(game.score))
         print("Lives: {}".format(game.lives))
         
-    
+    # Check for a collision between the missile and the enemy
+    if missile.is_collision(enemy):
+        x = random.randint(-250, 250)
+        y = random.randint(-250, 250)
+        enemy.goto(x, y)
+        missile.status = "ready"
+        game.score += 100
+        print("Score: {}".format(game.score))
 
 
 
